@@ -11,6 +11,7 @@ namespace GUIapp
     U Visit<U>(Func<U> onNone, Func<T, U> onSome);
     void Visit(Action onNone, Action<T> onSome);
   }
+  
   public class None<T> : Option<T>
   {
     public U Visit<U>(Func<U> onNone, Func<T, U> onSome)
@@ -29,17 +30,21 @@ namespace GUIapp
     {
       this.value = value;
     }
+
     public U Visit<U>(Func<U> onNone, Func<T, U> onSome)
     {
       return onSome(value);
     }
+
     public void Visit(Action onNone, Action<T> onSome)
     {
       onSome(value);
     }
+
   }
-  public interface //MISSING CODE
-  {
+
+  public interface Iterator<T> //fixed
+    {
     Option<T> GetNext();
     Option<T> GetCurrent();
     void Reset();
@@ -47,8 +52,46 @@ namespace GUIapp
 
   public class List<T> : Iterator<T>
   {
-    //MISSING CODE
-  }
+        //fixed
+        private T[] elementList;
+        public int current;
+
+        public List()
+        {
+            current = -1;
+            T[] list = new T[20];
+        }
+
+        public void Add(T element)
+        {
+            elementList[current + 1] = element;
+        }
+
+        public Option<T> GetNext()
+        {
+            current++;
+
+            if (elementList.Length >= current)
+            {
+                return new Some<T>(elementList[current]);
+            }
+            else { return new None<T>(); }
+
+        }
+        public Option<T> GetCurrent()
+        {
+            if (elementList.Length >= current)
+            {
+                return new Some<T>(elementList[current]);
+            }
+            else { return new None<T>(); }
+        }
+
+        public void Reset()
+        {
+            current = 0;
+        }
+    }
 
   public class Point
   {
@@ -60,12 +103,6 @@ namespace GUIapp
     public float X { get; set; }
     public float Y { get; set; }
   }
-
-
-
-
-
-
 
   public interface Updateable { void Update(UpdateVisitor visitor, float dt); }
   public interface Drawable { void Draw(DrawVisitor visitor); }
@@ -105,13 +142,12 @@ namespace GUIapp
     public void DrawGui(GuiManager gui_manager)
     {
       gui_manager.elements.Reset();
-      while //MISSING CODE
+      while(gui_manager.elements.GetNext().Visit(() => false, _ => true)) //MISSING CODE
       {
         gui_manager.elements.GetCurrent().Visit(() => { }, item => { item.Draw(this); });
       }
     }
   }
-
 
   public interface UpdateVisitor
   {
@@ -139,7 +175,10 @@ namespace GUIapp
     public void UpdateGui(GuiManager gui_manager, float dt)
     {
       gui_manager.elements.Reset();
-      while //MISSING CODE
+      while(gui_manager.elements.GetNext().Visit(() => false, _ => true))
+      {
+        gui_manager.elements.GetCurrent().Visit(() => { }, item => { item.Update(this, dt); });
+      }
     }
   }
 

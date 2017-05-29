@@ -8,7 +8,7 @@ namespace GUIapp
   public class Label : GuiElement
   {
     public string content;
-        
+               
     public int size;
     public Color color;
     public Point top_left_corner;
@@ -67,6 +67,7 @@ namespace GUIapp
   public class GuiManager : Updateable, Drawable
   {
     //MISSING CODE
+    public List<GuiElement> elements;
     public GuiManager(System.Action exit)
     {
       elements = new List<GuiElement>();
