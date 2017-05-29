@@ -8,7 +8,7 @@ namespace GUIapp
   public class Label : GuiElement
   {
     public string content;
-
+        
     public int size;
     public Color color;
     public Point top_left_corner;
